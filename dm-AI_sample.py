@@ -266,7 +266,7 @@ while cap.isOpened():
                 if idx == 362:
 
                     point_LER = (lm.x * img_w, lm.y * img_h)
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
 
                 if idx == 374:
 
@@ -349,12 +349,19 @@ while cap.isOpened():
 
 
                 if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
-
                     if idx == 1:
-
                         nose_2d = (lm.x * img_w, lm.y * img_h)
-
                         nose_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                    if idx == 61: 
+                        mouth_right_2d = (lm.x * img_w, lm.y * img_h)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                    if idx == 263:
+                        left eye left edge
+                    if idx == 291
+                        mouth left
+                    if idx == 199
+                        chin =  
 
 
 
