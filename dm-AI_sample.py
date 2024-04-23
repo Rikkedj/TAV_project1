@@ -338,6 +338,24 @@ while cap.isOpened():
                     # Get the 3D Coordinates
                     face_3d.append([x, y, lm.z])
 
+                
+                if idx == 160 or idx == 158 or idx == 144 or idx == 153 or idx == 33 or idx == 133:
+                    if idx == 33:
+                        p1 = (lm.x * img_w, lm.y * img_h)
+                    if idx == 160:
+                        p2 = (lm.x * img_w, lm.y * img_h)
+                    if idx == 158:  
+                        p3 = (lm.x * img_w, lm.y * img_h)
+                    if idx == 133:
+                        p4 = (lm.x * img_w, lm.y * img_h)
+                    if idx == 153:
+                        p5 = (lm.x * img_w, lm.y * img_h)
+                    if idx == 144:
+                        p6 = (lm.x * img_w, lm.y * img_h)
+
+                    EAR_right_eye = abs(p2[1] - p6[1]) + abs(p3[1] - p5[1]) / 2 * abs(p1[0] - p4[0])
+                    print(EAR_right_eye)
+
 
                 #LEFT_IRIS = [473, 474, 475, 476, 477]
 
