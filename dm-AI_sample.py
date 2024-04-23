@@ -90,8 +90,8 @@ drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 # 3 - Open the video source
 
 cap = cv2.VideoCapture(0) # Local webcam (index start from 0)
-
-
+max_EAR_right = 0.01
+max_EAR_left = 0.01
 
 # 4 - Iterate (within an infinite loop)
 
@@ -181,12 +181,18 @@ while cap.isOpened():
 
     point_LEIC = [] # Left Eye Iris Center
 
-    p1 = []
-    p2 = []
-    p3 = []
-    p4 = []
-    p5 = []
-    p6 = []
+    p1_right = []
+    p2_right = []
+    p3_right = []
+    p4_right = []
+    p5_right = []
+    p6_right = []
+    p1_left = []
+    p2_left = []
+    p3_left = []
+    p4_left = []
+    p5_left = []
+    p6_left = []
     
     # 4.3 - Get the landmark coordinates
 
@@ -398,29 +404,64 @@ while cap.isOpened():
                 #RIGHT_EYE=[ 33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161 , 246 ]      
                 #if idx == 33 or idx == 144 or idx == 153 or idx == 133 or idx == 158 or idx == 160:
                 if idx == 33:
-                    p1 = [lm.x * img_w, lm.y * img_h]
+                    p1_right = [lm.x * img_w, lm.y * img_h]
 
                 if idx == 144:
-                    p6 = [lm.x * img_w, lm.y * img_h]
+                    p6_right = [lm.x * img_w, lm.y * img_h]
 
                 if idx == 153:
-                    p5 = [lm.x * img_w, lm.y * img_h]
+                    p5_right = [lm.x * img_w, lm.y * img_h]
 
                 if idx == 133:
-                    p4 = [lm.x * img_w, lm.y * img_h]
+                    p4_right = [lm.x * img_w, lm.y * img_h]
 
                 if idx == 158:
-                    p3 = [lm.x * img_w, lm.y * img_h]
+                    p3_right = [lm.x * img_w, lm.y * img_h]
                 
                 if idx == 160:
-                    p2 = [lm.x * img_w, lm.y * img_h]
+                    p2_right = [lm.x * img_w, lm.y * img_h]
 
-                if p1 and p2 and p3 and p4 and p5 and p6:
-                    EAR_right = (abs(p2[1]-p6[1])+abs(p3[1]-p5[1])) / (2*abs(p1[0]-p4[0]))
-                    print(EAR_right)
+                if p1_right and p2_right and p3_right and p4_right and p5_right and p6_right:
+                    EAR_right = (abs(p2_right[1]-p6_right[1])+abs(p3_right[1]-p5_right[1])) / (2*abs(p1_right[0]-p4_right[0]))
+                    if EAR_right > max_EAR_right:
+                        max_EAR_right = EAR_right
+                    print((EAR_right)/max_EAR_right)
                     #print(type(EAR_right))
                     #cv2.putText(image, "EAR_right:  x = " + str(np.round(point_LEIC[0],0)) + " , y = " + str(np.round(point_LEIC[1],0)), (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2) 
                 
+                # EAR Left eye
+                if idx == 362:
+                    p1_left = [lm.x * img_w, lm.y * img_h]
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
+                if idx == 380:
+                    p6_left = [lm.x * img_w, lm.y * img_h]
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
+
+                if idx == 373:
+                    p5_left = [lm.x * img_w, lm.y * img_h]
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
+
+                if idx == 263:
+                    p4_left = [lm.x * img_w, lm.y * img_h]
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
+
+                if idx == 387:
+                    p3_left = [lm.x * img_w, lm.y * img_h]
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
+
+                if idx == 385:
+                    p2_left = [lm.x * img_w, lm.y * img_h]
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
+                    
+                    
+                if p1_left and p2_left and p3_left and p4_left and p5_left and p6_left:
+                    EAR_left = (abs(p2_left[1]-p6_left[1])+abs(p3_left[1]-p5_left[1])) / (2*abs(p1_left[0]-p4_left[0]))
+                    if EAR_left > max_EAR_left:
+                        max_EAR_left = EAR_left
+
+                    print(EAR_left/max_EAR_left)
+                    
+
             # 4.4. - Draw the positions on the frame
 
             l_eye_width = point_LEL[0] - point_LER[0]
