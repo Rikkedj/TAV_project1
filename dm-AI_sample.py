@@ -460,7 +460,31 @@ while cap.isOpened():
                         max_EAR_left = EAR_left
 
                     print(EAR_left/max_EAR_left)
+                
+
+                # Drowsiness detection
+                EAR_treshold = 0.2
+                left_eye_closed = False
+                right_eye_closed = False
+
+                if EAR_right < EAR_treshold:
+                    right_eye_closed = True
+                if EAR_left < EAR_treshold:
+                    left_eye_closed = True
+                
+                if right_eye_closed and left_eye_closed:
+                    if driver_asleep == False:
+                        print("Drowsiness detected")
+                        cv2.putText(image, "Drowsiness detected", (200, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                        time_start_drowsy = time.time()
+                        driver_asleep = True
+                    elif driver_asleep == True:
+                        time_asleep = time.time() - time_start_drowsy
                     
+                if not right_eye_closed and not left_eye_closed:
+                    driver_asleep = False
+                    time_asleep = 0
+            
 
             # 4.4. - Draw the positions on the frame
 
