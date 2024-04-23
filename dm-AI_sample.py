@@ -355,56 +355,115 @@ while cap.isOpened():
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
                     if idx == 61: 
                         mouth_right_2d = (lm.x * img_w, lm.y * img_h)
+                        mouth_right_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
                     if idx == 263:
-                        left eye left edge
-                    if idx == 291
-                        mouth left
-                    if idx == 199
-                        chin =  
-
-
+                        left_eye_left_edge_2d = (lm.x * img_w, lm.y * img_h)
+                        left_eye_left_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                    if idx == 291:
+                        mouth_left_2d = (lm.x * img_w, lm.y * img_h)
+                        mouth_left_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                    if idx == 199:
+                        chin_2d = (lm.x * img_w, lm.y * img_h) 
+                        chin_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
 
                     x, y = int(lm.x * img_w), int(lm.y * img_h)
-                   
-                    # Get the 2D Coordinates
+                    # Get the 2D Coordinates SKJØNNER IKKE,VIL DET IKKE BARE BLI EN EVIG LANG LISTE?
                     face_2d.append([x, y])
                     # Get the 3D Coordinates
                     face_3d.append([x, y, lm.z])
-
+                    # Convert into numpy arrays
+                    face_2d = np.array(face_2d, dtype=np.float64)
+                    face_3d = np.array(face_3d, dtype=np.float64)
 
                 #LEFT_IRIS = [473, 474, 475, 476, 477]
 
-                if idx == 473 or idx == 362 or idx == 374 or idx == 263 or idx == 386: # iris points
-
-                #if idx == 473 or idx == 474 or idx == 475 or idx == 476 or idx == 477: # eye border
-
+                #if idx == 473 or idx == 362 or idx == 374 or idx == 263 or idx == 386: # eye border
+                if idx == 473 or idx == 474 or idx == 475 or idx == 476 or idx == 477: # iris points
                     if idx == 473:
-
                         left_pupil_2d = (lm.x * img_w, lm.y * img_h)
-
                         left_pupil_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        left_eye_2d.append([x, y])
+                        left_eye_3d.append([x, y, lm.z])
 
-                    x, y = int(lm.x * img_w), int(lm.y * img_h)
-                    left_eye_2d.append([x, y])
-                    left_eye_3d.append([x, y, lm.z])
+                    if idx == 476:
+                        left_eye_right_edge_2d = (lm.x * img_w, lm.y * img_h)
+                        left_eye_right_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        left_eye_2d.append([x, y])
+                        left_eye_3d.append([x, y, lm.z])
 
+                    if idx == 477:
+                        left_eye_bottom_2d = (lm.x * img_w, lm.y * img_h)
+                        left_eye_bottom_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        left_eye_2d.append([x, y])
+                        left_eye_3d.append([x, y, lm.z])
+
+                    if idx == 474:
+                        left_eye_left_edge_2d = (lm.x * img_w, lm.y * img_h)
+                        left_eye_left_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        left_eye_2d.append([x, y])
+                        left_eye_3d.append([x, y, lm.z])
+
+                    if idx == 475:
+                        left_eye_top_2d = (lm.x * img_w, lm.y * img_h)
+                        left_eye_top_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        left_eye_2d.append([x, y])
+                        left_eye_3d.append([x, y, lm.z])
+                    
+                    # Convert to numpy
+                    left_eye_2d = np.array(left_eye_2d, dtype=np.float64)
+                    left_eye_3d = np.array(left_eye_3d, dtype=np.float64)
 
                 #RIGHT_IRIS = [468, 469, 470, 471, 472]
-
-                if idx == 468 or idx == 33 or idx == 145 or idx == 133 or idx == 159: # iris points
-
-                # if idx == 468 or idx == 469 or idx == 470 or idx == 471 or idx == 472: # eye border
+                #if idx == 468 or idx == 33 or idx == 145 or idx == 133 or idx == 159: # eye border
+                if idx == 468 or idx == 469 or idx == 470 or idx == 471 or idx == 472: # iris points
 
                     if idx == 468:
-
                         right_pupil_2d = (lm.x * img_w, lm.y * img_h)
-
                         right_pupil_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        right_eye_2d.append([x, y])
+                        right_eye_3d.append([x, y, lm.z])
+                    
+                    if idx == 471:
+                        right_eye_right_edge_2d = (lm.x * img_w, lm.y * img_h)
+                        right_eye_right_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        right_eye_2d.append([x, y])
+                        right_eye_3d.append([x, y, lm.z])
+                    
+                    if idx == 472:
+                        right_eye_bottom_2d = (lm.x * img_w, lm.y * img_h)
+                        right_eye_bottom_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        right_eye_2d.append([x, y])
+                        right_eye_3d.append([x, y, lm.z])
+                    
+                    if idx == 469:
+                        right_eye_left_edge_2d = (lm.x * img_w, lm.y * img_h)
+                        right_eye_left_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        right_eye_2d.append([x, y])
+                        right_eye_3d.append([x, y, lm.z])
+                    
+                    if idx == 470:
+                        right_eye_top_2d = (lm.x * img_w, lm.y * img_h)
+                        right_eye_top_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        right_eye_2d.append([x, y])
+                        right_eye_3d.append([x, y, lm.z])                    
 
-                    x, y = int(lm.x * img_w), int(lm.y * img_h)
-                    right_eye_2d.append([x, y])
-                    right_eye_3d.append([x, y, lm.z])
+                    # Convert to numpy
+                    right_eye_2d = np.array(right_eye_2d, dtype=np.float64)
+                    right_eye_3d = np.array(right_eye_3d, dtype=np.float64)
 
                     
                 # EAR 
@@ -572,15 +631,7 @@ while cap.isOpened():
         # 4.5 - Show the frame to the user
 
         cv2.imshow('Technologies for Autonomous Vehicles - Driver Monitoring Systems using AI code sample', image)       
-
-
-    # Convert into numpy arrays
-    face_2d = np.array(face_2d, dtype=np.float64)
-    face_3d = np.array(face_3d, dtype=np.float64)
-    left_eye_2d = np.array(left_eye_2d, dtype=np.float64)
-    left_eye_3d = np.array(left_eye_3d, dtype=np.float64)
-    right_eye_2d = np.array(right_eye_2d, dtype=np.float64)
-    right_eye_3d = np.array(right_eye_3d, dtype=np.float64)                
+             
 
     # The camera matrix
     focal_length = 1 * img_w
