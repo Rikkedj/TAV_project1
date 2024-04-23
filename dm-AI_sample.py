@@ -474,10 +474,12 @@ while cap.isOpened():
                 left_eye_closed = False
                 right_eye_closed = False
 
-                if EAR_right < EAR_treshold:
-                    right_eye_closed = True
-                if EAR_left < EAR_treshold:
-                    left_eye_closed = True
+                if EAR_right:
+                    if EAR_right < EAR_treshold:
+                        right_eye_closed = True
+                if EAR_left:
+                    if EAR_left < EAR_treshold:
+                        left_eye_closed = True
                 
                 if right_eye_closed and left_eye_closed:
                     if driver_asleep == False:
@@ -492,7 +494,7 @@ while cap.isOpened():
                     driver_asleep = False
                     time_asleep = 0
 
-                if time_asleep > 5:
+                if time_asleep > 10:
                     print("Driver asleep")      # !!! ALARM !!!
                     cv2.putText(image, "Driver asleep", (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             
