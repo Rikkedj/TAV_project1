@@ -493,7 +493,7 @@ while cap.isOpened():
                 if not right_eye_closed and not left_eye_closed:
                     driver_asleep = False
                     time_asleep = 0
-
+                    
                 if time_asleep > 10:
                     print("Driver asleep")      # !!! ALARM !!!
                     cv2.putText(image, "Driver asleep", (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
