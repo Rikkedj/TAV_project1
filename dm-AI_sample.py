@@ -388,41 +388,49 @@ while cap.isOpened():
                     #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(255, 0, 0), thickness=-1)
 
 
-
+                # ----------------- FACE for HEAD GAZE -----------------
                 if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
                     if idx == 1:
                         nose_2d = (lm.x * img_w, lm.y * img_h)
                         nose_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        face_2d.append([x, y])
+                        face_3d.append([x, y, lm.z])
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
                     if idx == 61: 
                         mouth_right_2d = (lm.x * img_w, lm.y * img_h)
                         mouth_right_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        face_2d.append([x, y])
+                        face_3d.append([x, y, lm.z])
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
                     if idx == 263:
                         left_eye_left_edge_2d = (lm.x * img_w, lm.y * img_h)
                         left_eye_left_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        face_2d.append([x, y])
+                        face_3d.append([x, y, lm.z])
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
                     if idx == 291:
                         mouth_left_2d = (lm.x * img_w, lm.y * img_h)
                         mouth_left_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        face_2d.append([x, y])
+                        face_3d.append([x, y, lm.z])
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
                     if idx == 199:
                         chin_2d = (lm.x * img_w, lm.y * img_h) 
                         chin_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        face_2d.append([x, y])
+                        face_3d.append([x, y, lm.z])
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
-
-                    x, y = int(lm.x * img_w), int(lm.y * img_h)
-                    # Get the 2D Coordinates SKJØNNER IKKE,VIL DET IKKE BARE BLI EN EVIG LANG LISTE?
-                    face_2d.append([x, y])
-                    # Get the 3D Coordinates
-                    face_3d.append([x, y, lm.z])
+                    
                     # Convert into numpy arrays
-                    face_2d = np.array(face_2d, dtype=np.float64)
-                    face_3d = np.array(face_3d, dtype=np.float64)
+                    #face_2d = np.array(face_2d, dtype=np.float64)
+                    #face_3d = np.array(face_3d, dtype=np.float64)
+
+                    # Vi må vel kanskje appende alle punkter først, og så gjøre arrayen om til en NUMPY array? fordi numpy array har ikke append funksjonen...
 
                 #LEFT_IRIS = [473, 474, 475, 476, 477]
 
                 #if idx == 473 or idx == 362 or idx == 374 or idx == 263 or idx == 386: # eye border
+                # ----------------- LEFT EYE IRIS for EYE GAZING -----------------
                 if idx == 473 or idx == 474 or idx == 475 or idx == 476 or idx == 477: # iris points
                     if idx == 473:
                         left_pupil_2d = (lm.x * img_w, lm.y * img_h)
@@ -460,11 +468,12 @@ while cap.isOpened():
                         left_eye_3d.append([x, y, lm.z])
                     
                     # Convert to numpy
-                    left_eye_2d = np.array(left_eye_2d, dtype=np.float64)
-                    left_eye_3d = np.array(left_eye_3d, dtype=np.float64)
+                    #left_eye_2d = np.array(left_eye_2d, dtype=np.float64)
+                    #left_eye_3d = np.array(left_eye_3d, dtype=np.float64)
 
                 #RIGHT_IRIS = [468, 469, 470, 471, 472]
                 #if idx == 468 or idx == 33 or idx == 145 or idx == 133 or idx == 159: # eye border
+                # ----------------- RIGHT EYE IRIS for EYE GAZING -----------------
                 if idx == 468 or idx == 469 or idx == 470 or idx == 471 or idx == 472: # iris points
 
                     if idx == 468:
@@ -503,13 +512,20 @@ while cap.isOpened():
                         right_eye_3d.append([x, y, lm.z])                    
 
                     # Convert to numpy
-                    right_eye_2d = np.array(right_eye_2d, dtype=np.float64)
-                    right_eye_3d = np.array(right_eye_3d, dtype=np.float64)
+                    #right_eye_2d = np.array(right_eye_2d, dtype=np.float64)
+                    #right_eye_3d = np.array(right_eye_3d, dtype=np.float64)
 
                     
-                # EAR 
+
+
+
+
+
+
+               
                 #RIGHT_EYE=[ 33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161 , 246 ]      
                 #if idx == 33 or idx == 144 or idx == 153 or idx == 133 or idx == 158 or idx == 160:
+                # ----------------- RIGHT EYE EAR for DROWSINESS DETECTION -----------------
                 if idx == 33:
                     p1_right = [lm.x * img_w, lm.y * img_h]
 
@@ -534,8 +550,12 @@ while cap.isOpened():
                     if EAR_right > max_EAR_right:
                         max_EAR_right = EAR_right
                     
+
+
+
                     
                 # EAR Left eye
+                # ----------------- LEFT EYE EAR for DROWSINESS DETECTION -----------------
                 if idx == 362:
                     p1_left = [lm.x * img_w, lm.y * img_h]
                     cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
@@ -568,7 +588,10 @@ while cap.isOpened():
 
                 
 
+
+
                 # Drowsiness detection
+                # ----------------- DROWSINESS DETECTION -----------------
                 if all_points_right_eye and all_points_left_eye:
                     driver_asleep, time_start_drowsy, time_asleep = drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, time_asleep)     # driver_asleep and time_start_drowsy are global variables
             
