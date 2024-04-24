@@ -258,134 +258,64 @@ while cap.isOpened():
 
                 #RIGHT_IRIS = [468, 469, 470, 471, 472]
 
+                # ----------------- GET POINTS FOR RIGHT EYE DRAWING -----------------
+
                 if idx == 33:
-
                     point_RER = (lm.x * img_w, lm.y * img_h)
-
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 145:
-
                     point_REB = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
                 
                 if idx == 144:
-
                     point_REBL = (lm.x * img_w, lm.y * img_h)
-
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
                 
                 if idx == 153:
-
                     point_REBR = (lm.x * img_w, lm.y * img_h)
-
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
         
-
                 if idx == 133:
-
                     point_REL = (lm.x * img_w, lm.y * img_h)
-
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 159:
-
                     point_RET = (lm.x * img_w, lm.y * img_h)
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
-                
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 158:
                     point_RETR = (lm.x * img_w, lm.y * img_h)
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 160:
                     point_RETL = (lm.x * img_w, lm.y * img_h)
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
+
+                # ----------------- GET POINTS FOR RIGHT EYE DRAWING -----------------
 
                 if idx == 362:
-
                     point_LER = (lm.x * img_w, lm.y * img_h)
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
 
                 if idx == 374:
-
                     point_LEB = (lm.x * img_w, lm.y * img_h)
 
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
-
                 if idx == 263:
-
                     point_LEL = (lm.x * img_w, lm.y * img_h)
 
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
-
                 if idx == 386:
-
                     point_LET = (lm.x * img_w, lm.y * img_h)
 
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 0, 255), thickness=-1)
 
+                # ----------------- GET POINTS FOR IRIS CENTER -----------------
+                
                 if idx == 468:
-
                     point_REIC = (lm.x * img_w, lm.y * img_h)
 
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(255, 255, 0), thickness=-1)                    
-
-                if idx == 469:
-
-                    point_469 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 255, 0), thickness=-1)
-
-                if idx == 470:
-
-                    point_470 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 255, 0), thickness=-1)
-
-                if idx == 471:
-
-                    point_471 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 255, 0), thickness=-1)
-
-                if idx == 472:
-
-                    point_472 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 255, 0), thickness=-1)
-
                 if idx == 473:
-
                     point_LEIC = (lm.x * img_w, lm.y * img_h)
 
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(0, 255, 255), thickness=-1)
-
-                if idx == 474:
-
-                    point_474 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(255, 0, 0), thickness=-1)
-
-                if idx == 475:
-
-                    point_475 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(255, 0, 0), thickness=-1)
-
-                if idx == 476:
-
-                    point_476 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(255, 0, 0), thickness=-1)
-
-                if idx == 477:
-
-                    point_477 = (lm.x * img_w, lm.y * img_h)
-
-                    #cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=5, color=(255, 0, 0), thickness=-1)
 
 
                 # ----------------- FACE for HEAD GAZE -----------------
@@ -393,33 +323,45 @@ while cap.isOpened():
                     if idx == 1:
                         nose_2d = (lm.x * img_w, lm.y * img_h)
                         nose_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
                         face_2d.append([x, y])
                         face_3d.append([x, y, lm.z])
-                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
+                    if idx == 33: 
+                        right_eye_right_edge_2d = (lm.x * img_w, lm.y * img_h)
+                        right_eye_right_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
+                        face_2d.append([x, y])
+                        face_3d.append([x, y, lm.z])
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
                     if idx == 61: 
                         mouth_right_2d = (lm.x * img_w, lm.y * img_h)
                         mouth_right_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
                         face_2d.append([x, y])
                         face_3d.append([x, y, lm.z])
-                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
                     if idx == 263:
                         left_eye_left_edge_2d = (lm.x * img_w, lm.y * img_h)
                         left_eye_left_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
                         face_2d.append([x, y])
                         face_3d.append([x, y, lm.z])
-                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
                     if idx == 291:
                         mouth_left_2d = (lm.x * img_w, lm.y * img_h)
                         mouth_left_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
                         face_2d.append([x, y])
                         face_3d.append([x, y, lm.z])
-                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
                     if idx == 199:
                         chin_2d = (lm.x * img_w, lm.y * img_h) 
                         chin_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
                         face_2d.append([x, y])
                         face_3d.append([x, y, lm.z])
-                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 255, 0), thickness=-1)
+                        cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
                     
                     # Convert into numpy arrays
                     #face_2d = np.array(face_2d, dtype=np.float64)
