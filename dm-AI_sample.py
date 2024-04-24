@@ -28,6 +28,8 @@ import mediapipe as mp
 
 import numpy as np 
 
+import math
+
 import time
 
 import statistics as st
@@ -69,8 +71,47 @@ def drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, 
 
     return driver_asleep, time_start_drowsy, time_asleep
 
+# function to calculate angel between two points in degrees
+def yaw_angle_between_points(point_center, point_iris, point_ref):     
+    sign = 1
+    if point_iris[0] < point_center[0]:     # the point with most positive x-value is the rightmost point because the x-axis is positive to the right
+        sign = -1  
 
+    vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1], 0]
+    vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1], 0]
 
+    dot_product = np.dot(vec_ref_iris, vec_ref_center)
+    norm_ref_iris = np.linalg.norm(vec_ref_iris)
+    norm_ref_center = np.linalg.norm(vec_ref_center)
+
+    cos_theta = dot_product / (norm_ref_iris * norm_ref_center)
+    
+    angle_in_radians = np.arccos(cos_theta)
+    angle_in_degrees = math.degrees(angle_in_radians)
+
+    return angle_in_degrees*sign
+
+def pitch_angle_between_points(point_center, point_iris, point_ref):     
+    sign = 1
+    if point_iris[1] > point_center[1]:     # positive y-axis is downwards, which means that the "biggest" coordinate in the y-direction is lower down. If i look down, my iris is further down than the center of my eye, so if point_iris[1] > point_center[1], i am looking down, and looking down should be negative angle.
+        sign = -1  
+
+    vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1], 0]
+    vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1], 0]
+
+    dot_product = np.dot(vec_ref_iris, vec_ref_center)
+    norm_ref_iris = np.linalg.norm(vec_ref_iris)
+    norm_ref_center = np.linalg.norm(vec_ref_center)
+
+    cos_theta = dot_product / (norm_ref_iris * norm_ref_center)
+    
+    angle_in_radians = np.arccos(cos_theta)
+    angle_in_degrees = math.degrees(angle_in_radians)
+
+    return angle_in_degrees*sign
+
+# if i rotate my head to the right, it is positive yaw (y-angel). And if i then look to the left, it should be allowed. therefore, that eye-gaze-angle should be negative. when looking to the left, the iris is left of the middle of the eye. if point_iris[0] < point_center[0], then the angle should be negative. if point_iris[0] > point_center[0], then the angle should be positive.
+# if i see up, it should be positive pitch. if i take my head in positiv pitch and look down with my eyes, it should be 0 degrees in total, so looking down should be negative angle. 
 
 # 2 - Set the desired setting
 
@@ -527,6 +568,7 @@ while cap.isOpened():
 
             l_eye_center = [(point_LEL[0] + point_LER[0])/2 ,(point_LEB[1] + point_LET[1])/2]
 
+
             #cv2.circle(image, (int(l_eye_center[0]), int(l_eye_center[1])), radius=int(horizontal_threshold * l_eye_width), color=(255, 0, 0), thickness=-1) #center of eye and its radius 
 
             cv2.circle(image, (int(point_LEIC[0]), int(point_LEIC[1])), radius=3, color=(0, 255, 0), thickness=-1) # Center of iris
@@ -599,7 +641,7 @@ while cap.isOpened():
         # Angels
         # rotation about x-axis = pitch, direction of rotation is nodding
         # rotation about y-axis = yaw,   direction of rotation is turing head left or right -> turn head to the right is positive
-        # rotation about z-axis = roll,  direction of rotation is tilting head left or right -> tilt to the right is negative
+        # rotation about z-axis = roll,  direction of rotation is tilting head left or right -> tilt to the left is positive
 
         # Get angles
         angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
@@ -624,6 +666,23 @@ while cap.isOpened():
         #print("Pitch right eye: " + str(pitch_right_eye) + " Yaw right eye: " + str(yaq_right_eye))
 
         #if head gaze position differs more than +/- 30 degrees with respect to rest-position (0,0,0), print alarm
+
+        # iris center
+        #point_REIC
+        #point_LEIC
+        l_eye_center = [(point_LEL[0] + point_LER[0])/2 ,(point_LEB[1] + point_LET[1])/2]
+        r_eye_center = [(point_REL[0] + point_RER[0])/2 ,(point_REB[1] + point_RET[1])/2]
+        # with the eyes, we only do 2D calculations
+        # right eye -> # point B is the top point of the eye, point A is the iris, point C is the center of the eye
+        
+        right_eye_yaw_angle = yaw_angle_between_points(point_REIC, r_eye_center, point_RET)
+        right_eye_pitch_angle = pitch_angle_between_points(point_REIC, r_eye_center, point_RER)
+
+        left_eye_yaw_angle = yaw_angle_between_points(point_LEIC, l_eye_center, point_LET)
+        left_eye_pitch_angle = pitch_angle_between_points(point_LEIC, l_eye_center, point_LER)
+        
+        print("Eye pitch: "+ str(right_eye_pitch_angle), "Eye yaw: " + str(left_eye_pitch_angle))
+        
 
         end = time.time()
 
@@ -655,33 +714,6 @@ while cap.isOpened():
 
         cv2.imshow('Technologies for Autonomous Vehicles - Driver Monitoring Systems using AI code sample', image)       
              
-
-# Convert into numpy arrays
-    face_2d = np.array(face_2d, dtype=np.float64)
-    face_3d = np.array(face_3d, dtype=np.float64)
-    left_eye_2d = np.array(left_eye_2d, dtype=np.float64)
-    left_eye_3d = np.array(left_eye_3d, dtype=np.float64)
-    right_eye_2d = np.array(right_eye_2d, dtype=np.float64)
-    right_eye_3d = np.array(right_eye_3d, dtype=np.float64)                
-
-    # The camera matrix
-    focal_length = 1 * img_w
-    cam_matrix = np.array([ [focal_length, 0, img_h / 2],
-                            [0, focal_length, img_w / 2],
-                            [0, 0, 1]])
-    # The distorsion parameters
-    dist_matrix = np.zeros((4, 1), dtype=np.float64)
-
-
-    # Solve PnP
-    success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
-    success_left_eye, rot_vec_left_eye, trans_vec_left_eye = cv2.solvePnP(left_eye_3d, left_eye_2d, cam_matrix, dist_matrix)
-    success_right_eye, rot_vec_right_eye, trans_vec_right_eye = cv2.solvePnP(right_eye_3d, right_eye_2d, cam_matrix, dist_matrix)
-
-    # Get rotational matrix
-    rmat, jac = cv2.Rodrigues(rot_vec)
-    rmat_left_eye, jac_left_eye = cv2.Rodrigues(rot_vec_left_eye)
-    rmat_right_eye, jac_right_eye = cv2.Rodrigues(rot_vec_right_eye)
     
 
     if cv2.waitKey(5) & 0xFF == 27:
