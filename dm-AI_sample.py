@@ -77,8 +77,8 @@ def yaw_angle_between_points(point_center, point_iris, point_ref):
     if point_iris[0] < point_center[0]:     # the point with most positive x-value is the rightmost point because the x-axis is positive to the right
         sign = -1  
 
-    vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1], 0]
-    vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1], 0]
+    vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1]]
+    vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1]]
 
     dot_product = np.dot(vec_ref_iris, vec_ref_center)
     norm_ref_iris = np.linalg.norm(vec_ref_iris)
@@ -96,8 +96,8 @@ def pitch_angle_between_points(point_center, point_iris, point_ref):
     if point_iris[1] > point_center[1]:     # positive y-axis is downwards, which means that the "biggest" coordinate in the y-direction is lower down. If i look down, my iris is further down than the center of my eye, so if point_iris[1] > point_center[1], i am looking down, and looking down should be negative angle.
         sign = -1  
 
-    vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1], 0]
-    vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1], 0]
+    vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1]]
+    vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1]]
 
     dot_product = np.dot(vec_ref_iris, vec_ref_center)
     norm_ref_iris = np.linalg.norm(vec_ref_iris)
@@ -112,6 +112,21 @@ def pitch_angle_between_points(point_center, point_iris, point_ref):
 
 # if i rotate my head to the right, it is positive yaw (y-angel). And if i then look to the left, it should be allowed. therefore, that eye-gaze-angle should be negative. when looking to the left, the iris is left of the middle of the eye. if point_iris[0] < point_center[0], then the angle should be negative. if point_iris[0] > point_center[0], then the angle should be positive.
 # if i see up, it should be positive pitch. if i take my head in positiv pitch and look down with my eyes, it should be 0 degrees in total, so looking down should be negative angle. 
+
+def yaw_distance_between_points(point_center, point_iris, point_ref):     
+
+    dist_center_iris   = point_iris[0] - point_center[0]        # if iris is bigger than center, then i am looking to the right, and that should be positive distance
+
+    return 1
+
+def pitch_distance_between_points(point_center, point_iris, point_ref):     
+    
+    dist_cener_iris   = point_iris[1] - point_center[1]        # if iris is bigger than center, then i am looking to down, and that should be negative distance
+
+    return 1
+
+# note, angles one the eyes was just a mess, or yaw worked alright, the pitch was al over the place. Maybe if i use the sam reference point for both eyes, like the nose for instance, maybe it works? or find a way to use the distance instead 
+#the yaw was a mess when looking up and down, but when looking to the sides, it works. 
 
 # 2 - Set the desired setting
 
@@ -681,7 +696,7 @@ while cap.isOpened():
         left_eye_yaw_angle = yaw_angle_between_points(point_LEIC, l_eye_center, point_LET)
         left_eye_pitch_angle = pitch_angle_between_points(point_LEIC, l_eye_center, point_LER)
         
-        print("Eye pitch: "+ str(right_eye_pitch_angle), "Eye yaw: " + str(left_eye_pitch_angle))
+        print("Eye pitch: "+ str(right_eye_pitch_angle), "Eye yaw: " + str(right_eye_yaw_angle))
         
 
         end = time.time()
