@@ -113,17 +113,13 @@ def pitch_angle_between_points(point_center, point_iris, point_ref):
 # if i rotate my head to the right, it is positive yaw (y-angel). And if i then look to the left, it should be allowed. therefore, that eye-gaze-angle should be negative. when looking to the left, the iris is left of the middle of the eye. if point_iris[0] < point_center[0], then the angle should be negative. if point_iris[0] > point_center[0], then the angle should be positive.
 # if i see up, it should be positive pitch. if i take my head in positiv pitch and look down with my eyes, it should be 0 degrees in total, so looking down should be negative angle. 
 
-def yaw_distance_between_points(point_center, point_iris, point_ref):     
+def distance_between_points(point_center, point_iris):     
 
-    dist_center_iris   = point_iris[0] - point_center[0]        # if iris is bigger than center, then i am looking to the right, and that should be positive distance
+    dist_center_iris = [0, 0]
+    dist_center_iris[0] = point_iris[0] - point_center[0]        # if iris is bigger than center, then i am looking to the right, and that should be positive distance
+    dist_center_iris[1] = point_iris[1] - point_center[1]        # if iris is bigger than center, then i am looking down, and that should be negative distance
 
-    return 1
-
-def pitch_distance_between_points(point_center, point_iris, point_ref):     
-    
-    dist_cener_iris   = point_iris[1] - point_center[1]        # if iris is bigger than center, then i am looking to down, and that should be negative distance
-
-    return 1
+    return dist_center_iris
 
 # note, angles one the eyes was just a mess, or yaw worked alright, the pitch was al over the place. Maybe if i use the sam reference point for both eyes, like the nose for instance, maybe it works? or find a way to use the distance instead 
 #the yaw was a mess when looking up and down, but when looking to the sides, it works. 
@@ -676,28 +672,32 @@ while cap.isOpened():
         yaq_right_eye = angles_right_eye[1] * 1800
 
         # Print the angles
-        #print("Pitch: " + str(pitch) + " Yaw: " + str(yaw) + " Roll: " + str(roll))
+        print("Pitch: " + str(pitch) + " Yaw: " + str(yaw) + " Roll: " + str(roll))
         #print("Pitch left eye: " + str(pitch_left_eye) + " Yaw left eye: " + str(yaw_left_eye))
         #print("Pitch right eye: " + str(pitch_right_eye) + " Yaw right eye: " + str(yaq_right_eye))
-
-        #if head gaze position differs more than +/- 30 degrees with respect to rest-position (0,0,0), print alarm
 
         # iris center
         #point_REIC
         #point_LEIC
         l_eye_center = [(point_LEL[0] + point_LER[0])/2 ,(point_LEB[1] + point_LET[1])/2]
         r_eye_center = [(point_REL[0] + point_RER[0])/2 ,(point_REB[1] + point_RET[1])/2]
-        # with the eyes, we only do 2D calculations
-        # right eye -> # point B is the top point of the eye, point A is the iris, point C is the center of the eye
         
         right_eye_yaw_angle = yaw_angle_between_points(point_REIC, r_eye_center, point_RET)
         right_eye_pitch_angle = pitch_angle_between_points(point_REIC, r_eye_center, point_RER)
 
         left_eye_yaw_angle = yaw_angle_between_points(point_LEIC, l_eye_center, point_LET)
         left_eye_pitch_angle = pitch_angle_between_points(point_LEIC, l_eye_center, point_LER)
-        
-        print("Eye pitch: "+ str(right_eye_pitch_angle), "Eye yaw: " + str(right_eye_yaw_angle))
-        
+
+        # pitch, altså se opp og ned, funker dårlig, men orker ikke meeeer ah
+
+        total_pitch = pitch + right_eye_pitch_angle/2 + left_eye_pitch_angle/2
+        total_yaw = yaw + right_eye_yaw_angle/2 + left_eye_yaw_angle/2
+        total_roll = roll
+
+        if abs(total_pitch) > 30 or abs(total_yaw) > 30 or abs(total_roll) > 30:
+            print("!!ALARM!! Diver is distracted")
+            cv2.putText(image, "Driver asleep", (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
 
         end = time.time()
 
@@ -712,8 +712,6 @@ while cap.isOpened():
         else:
 
             fps=0
-
-        
 
         
 
