@@ -54,8 +54,8 @@ def drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, 
 
     if right_eye_closed and left_eye_closed:
         if driver_asleep == False:
-            print("Drowsiness detected")
-            cv2.putText(image, "Drowsiness detected", (200, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            print("Possible drowsiness detected")
+            cv2.putText(image, "Possible drowsiness detected", (200, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             time_start_drowsy = time.time()
             driver_asleep = True
         elif driver_asleep == True:
@@ -113,6 +113,7 @@ def pitch_angle_between_points(point_center, point_iris, point_ref):
 # if i rotate my head to the right, it is positive yaw (y-angel). And if i then look to the left, it should be allowed. therefore, that eye-gaze-angle should be negative. when looking to the left, the iris is left of the middle of the eye. if point_iris[0] < point_center[0], then the angle should be negative. if point_iris[0] > point_center[0], then the angle should be positive.
 # if i see up, it should be positive pitch. if i take my head in positiv pitch and look down with my eyes, it should be 0 degrees in total, so looking down should be negative angle. 
 
+# not used....
 def distance_between_points(point_center, point_iris):     
 
     dist_center_iris = [0, 0]
@@ -394,7 +395,12 @@ while cap.isOpened():
                     EAR_right = (abs(p2_right[1]-p6_right[1])+abs(p3_right[1]-p5_right[1])) / (2*abs(p1_right[0]-p4_right[0]))
                     if EAR_right > max_EAR_right:
                         max_EAR_right = EAR_right
-                    
+                        # we dont use the max value? was supposed to use this instead of max EAR=1 because that is not possible to reach. Test this if it is still the case, if not, remove EAR_left_max etc. 
+                        # the idea was something like this: (justere skalaen) sånn at ikke 20% åpne øyne egt er når man har de ganske fullt åpne fordi 1 i EAR er uoppnålig
+                        # if EAR_right > EAR_right_max: 
+                        #     EAR_right_max = EAR_right
+                        # else:
+                        # EAR_right = EAR_right/EAR_right_max
                     
                 # EAR Left eye
                 # ----------------- LEFT EYE EAR for DROWSINESS DETECTION -----------------
@@ -434,8 +440,6 @@ while cap.isOpened():
                 if all_points_right_eye and all_points_left_eye:
                     driver_asleep, time_start_drowsy, time_asleep = drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, time_asleep)     # driver_asleep and time_start_drowsy are global variables
             
-
-
 
 
 
