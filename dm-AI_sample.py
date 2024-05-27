@@ -54,7 +54,7 @@ def drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, 
 
     if right_eye_closed and left_eye_closed:
         if driver_asleep == False:
-            print("Possible drowsiness detected")
+            print("Possible drowsiness detected\n")
             cv2.putText(image, "Possible drowsiness detected", (200, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             time_start_drowsy = time.time()
             driver_asleep = True
@@ -66,8 +66,8 @@ def drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, 
         time_asleep = 0
 
     if time_asleep > 10:
-        print("Driver asleep")      # !!! ALARM !!!
-        cv2.putText(image, "Driver asleep", (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        print("Eyes closed for too long")      # !!! ALARM !!!
+        cv2.putText(image, "Eyes closed!!", (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
     return driver_asleep, time_start_drowsy, time_asleep
 
@@ -297,7 +297,7 @@ while cap.isOpened():
 
             for idx, lm in enumerate(face_landmarks.landmark):  # "idx" is the id (number) of the landmark, the one in the drawings, and "lm" is coordinate points. Here we are iterating through all landmarks, i.e. 477 points, one at a time 
 
-
+                #time.sleep(1)
                 # ----------------- POINTS -----------------
 
                 #LEFT_EYE =[ 362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385,384, 398 ]
@@ -433,8 +433,8 @@ while cap.isOpened():
                     EAR_left = (abs(p2_left[1]-p6_left[1])+abs(p3_left[1]-p5_left[1])) / (2*abs(p1_left[0]-p4_left[0]))
                     if EAR_left > max_EAR_left:
                         max_EAR_left = EAR_left
-
-
+                
+                
                 # Drowsiness detection
                 # ----------------- DROWSINESS DETECTION -----------------
                 if all_points_right_eye and all_points_left_eye:
@@ -676,7 +676,7 @@ while cap.isOpened():
         yaq_right_eye = angles_right_eye[1] * 1800
 
         # Print the angles
-        print("Pitch: " + str(pitch) + " Yaw: " + str(yaw) + " Roll: " + str(roll))
+        #print("Pitch: " + str(pitch) + " Yaw: " + str(yaw) + " Roll: " + str(roll))
         #print("Pitch left eye: " + str(pitch_left_eye) + " Yaw left eye: " + str(yaw_left_eye))
         #print("Pitch right eye: " + str(pitch_right_eye) + " Yaw right eye: " + str(yaq_right_eye))
 
