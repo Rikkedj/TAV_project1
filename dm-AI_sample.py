@@ -1,26 +1,3 @@
-#**************************************************************************************
-
-#
-
-#   Driver Monitoring Systems using AI (code sample)
-
-#
-
-#   File: eyes_position.m
-
-#   Author: Jacopo Sini
-
-#   Company: Politecnico di Torino
-
-#   Date: 19 Mar 2024
-
-#
-
-#**************************************************************************************
-
-
-
-# 1 - Import the needed libraries
 
 import cv2
 
@@ -36,15 +13,12 @@ import statistics as st
 
 import os
 
-# 1.5 - Define functions
 
 def drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, time_asleep):
-    # Drowsiness detection
 
     EAR_treshold = 0.2
     left_eye_closed = False
     right_eye_closed = False
-
 
     if EAR_right < EAR_treshold:
         right_eye_closed = True
@@ -71,15 +45,18 @@ def drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, 
 
     return driver_asleep, time_start_drowsy, time_asleep
 
-# function to calculate angel between two points in degrees
+
+# Function to calculate the yaw angle between the Iris Center and the Center of the Eye
 def yaw_angle_between_points(point_center, point_iris, point_ref):     
-    sign = 1
-    if point_iris[0] < point_center[0]:     # the point with most positive x-value is the rightmost point because the x-axis is positive to the right
+    sign = 1                                
+    if point_iris[0] < point_center[0]:         # negative angle if iris is to the left of the center of the eye (looking to the left)
         sign = -1  
 
+    # Calculate the vector between the reference point and the iris center and the center of the eye
     vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1]]
     vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1]]
 
+    # Dot product
     dot_product = np.dot(vec_ref_iris, vec_ref_center)
     norm_ref_iris = np.linalg.norm(vec_ref_iris)
     norm_ref_center = np.linalg.norm(vec_ref_center)
@@ -91,14 +68,18 @@ def yaw_angle_between_points(point_center, point_iris, point_ref):
 
     return angle_in_degrees*sign
 
+
+# Function to calculate the pitch angle between the Iris Center and the Center of the Eye
 def pitch_angle_between_points(point_center, point_iris, point_ref):     
-    sign = 1
-    if point_iris[1] > point_center[1]:     # positive y-axis is downwards, which means that the "biggest" coordinate in the y-direction is lower down. If i look down, my iris is further down than the center of my eye, so if point_iris[1] > point_center[1], i am looking down, and looking down should be negative angle.
+    sign = 1                                
+    if point_iris[1] > point_center[1]:             # negative angle if iris is below the center of the eye (looking down)
         sign = -1  
 
+    # Calculate the vector between the reference point and the iris center and the center of the eye
     vec_ref_iris   = [point_iris[0] - point_ref[0], point_iris[1] - point_ref[1]]
     vec_ref_center = [point_center[0] - point_ref[0], point_center[1] - point_ref[1]]
 
+    # Dot product
     dot_product = np.dot(vec_ref_iris, vec_ref_center)
     norm_ref_iris = np.linalg.norm(vec_ref_iris)
     norm_ref_center = np.linalg.norm(vec_ref_center)
@@ -110,22 +91,9 @@ def pitch_angle_between_points(point_center, point_iris, point_ref):
 
     return angle_in_degrees*sign
 
-# if i rotate my head to the right, it is positive yaw (y-angel). And if i then look to the left, it should be allowed. therefore, that eye-gaze-angle should be negative. when looking to the left, the iris is left of the middle of the eye. if point_iris[0] < point_center[0], then the angle should be negative. if point_iris[0] > point_center[0], then the angle should be positive.
-# if i see up, it should be positive pitch. if i take my head in positiv pitch and look down with my eyes, it should be 0 degrees in total, so looking down should be negative angle. 
 
-# not used....
-def distance_between_points(point_center, point_iris):     
 
-    dist_center_iris = [0, 0]
-    dist_center_iris[0] = point_iris[0] - point_center[0]        # if iris is bigger than center, then i am looking to the right, and that should be positive distance
-    dist_center_iris[1] = point_iris[1] - point_center[1]        # if iris is bigger than center, then i am looking down, and that should be negative distance
-
-    return dist_center_iris
-
-# note, angles one the eyes was just a mess, or yaw worked alright, the pitch was al over the place. Maybe if i use the sam reference point for both eyes, like the nose for instance, maybe it works? or find a way to use the distance instead 
-#the yaw was a mess when looking up and down, but when looking to the sides, it works. 
-
-# 2 - Set the desired setting
+# Settings for MediaPipe Face Mesh
 
 mp_face_mesh = mp.solutions.face_mesh
 
@@ -150,95 +118,36 @@ mp_drawing = mp.solutions.drawing_utils
 drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
 
-# Get the list of available capture devices (comment out)
-
-#index = 0
-
-#arr = []
-
-#while True:
-
-#    dev = cv2.VideoCapture(index)
-
-#    try:
-
-#        arr.append(dev.getBackendName)
-
-#    except:
-
-#        break
-
-#    dev.release()
-
-#    index += 1
-
-#print(arr)
-
-
-
-# 3 - Open the video source
-
+# ----- OPEN VIDEO CAPTURE -----
 cap = cv2.VideoCapture(0) # Local webcam (index start from 0)
-max_EAR_right = 0.01
-max_EAR_left = 0.01
 driver_asleep = False
 time_start_drowsy = 0
 time_asleep = 0
 all_points_left_eye = False
 all_points_right_eye = False
 
-# 4 - Iterate (within an infinite loop)
 
 while cap.isOpened(): 
 
-    
-
-    # 4.1 - Get the new frame
-
+    # Get the new frame
     success, image = cap.read() 
-
     
-
     start = time.time()
 
 
-
-    # Also convert the color space from BGR to RGB
-
     if image is None:
-
         break
-
-        #continue
-
-    #else: #needed with some cameras/video input format
-
-        #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-
-
-    # To improve performace
 
     image.flags.writeable = False
 
     
-
-    # 4.2 - Run MediaPipe on the frame
-
+    # Run MediaPipe on the frame
     results = face_mesh.process(image)
 
 
 
     # To improve performance
-
     image.flags.writeable = True
-
-
-
-    # Convert the color space from RGB to BGR
-
-    #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
 
 
     img_h, img_w, img_c = image.shape
@@ -251,31 +160,23 @@ while cap.isOpened():
     left_eye_2d = []
     left_eye_3d = []
 
-
+    # RIGHT EYE
     point_RER = [] # Right Eye Right
-
     point_REB = [] # Right Eye Bottom
-
     point_REL = [] # Right Eye Left
-
     point_RET = [] # Right Eye Top
 
-
-
+    # LEFT EYE
     point_LER = [] # Left Eye Right
-
     point_LEB = [] # Left Eye Bottom
-
     point_LEL = [] # Left Eye Left
-
     point_LET = [] # Left Eye Top
 
-
-
+    # IRISES
     point_REIC = [] # Right Eye Iris Center
-
     point_LEIC = [] # Left Eye Iris Center
 
+    # EAR POINTS
     p1_right = []
     p2_right = []
     p3_right = []
@@ -289,16 +190,14 @@ while cap.isOpened():
     p5_left = []
     p6_left = []
     
-    # 4.3 - Get the landmark coordinates
+    # Get the coordinates of the facial landmarks
+    if results.multi_face_landmarks:                            # Check if any face is detected
 
-    if results.multi_face_landmarks:        # multi_face_landmarks is a list of potentially multiple faces that is detected. if resukts.multi..., if this if statement is true, at least one face is detected. (The maximum from the settings is now 1, so....)
+        for face in results.multi_face_landmarks:               # Iterate through all detected faces 
 
-        for face_landmarks in results.multi_face_landmarks:     # face_landmarks is all landmarks (points) from one of the detected faces. I.e. here we are iterating through the faces, most of the times, we will only have one face. This line is kind of useless now that the maximum number of allowed faces is 1, but anyways
+            for idx, lm in enumerate(face.landmark):            # Iterate through all landmarks in face. idx = point number, lm = point coordinate 
 
-            for idx, lm in enumerate(face_landmarks.landmark):  # "idx" is the id (number) of the landmark, the one in the drawings, and "lm" is coordinate points. Here we are iterating through all landmarks, i.e. 477 points, one at a time 
-
-                #time.sleep(1)
-                # ----------------- POINTS -----------------
+                # ----------------- SOME IMPORTANT POINTS -----------------
 
                 #LEFT_EYE =[ 362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385,384, 398 ]
                 #LEFT_EYE_BORDER=[ 473, 362, 374, 263, 386 ]
@@ -309,22 +208,17 @@ while cap.isOpened():
                 #LEFT_IRIS  = [ 473, 474, 475, 476, 477 ] 
                 #RIGHT_IRIS = [ 468, 469, 470, 471, 472 ]
 
-                # ----------------- GET POINTS FOR RIGHT EYE DRAWING -----------------
 
+
+
+                # ----------------- RIGHT EYE -----------------
+                # Draw eye and later used for calculating center of eye
                 if idx == 33:
                     point_RER = (lm.x * img_w, lm.y * img_h)
                     cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 145:
                     point_REB = (lm.x * img_w, lm.y * img_h)
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-                
-                if idx == 144:
-                    point_REBL = (lm.x * img_w, lm.y * img_h)
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-                
-                if idx == 153:
-                    point_REBR = (lm.x * img_w, lm.y * img_h)
                     cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
         
                 if idx == 133:
@@ -335,32 +229,27 @@ while cap.isOpened():
                     point_RET = (lm.x * img_w, lm.y * img_h)
                     cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
-                if idx == 158:
-                    point_RETR = (lm.x * img_w, lm.y * img_h)
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
-                if idx == 160:
-                    point_RETL = (lm.x * img_w, lm.y * img_h)
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-
-
-                # ----------------- GET POINTS FOR RIGHT EYE DRAWING -----------------
-
+                # ----------------- LEFT EYE -----------------
+                # Draw eye and later used for calculating center of eye
                 if idx == 362:
                     point_LER = (lm.x * img_w, lm.y * img_h)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 374:
                     point_LEB = (lm.x * img_w, lm.y * img_h)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 263:
                     point_LEL = (lm.x * img_w, lm.y * img_h)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 386:
                     point_LET = (lm.x * img_w, lm.y * img_h)
+                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
 
                 # ----------------- GET POINTS FOR IRIS CENTER -----------------
-                
                 if idx == 468:
                     point_REIC = (lm.x * img_w, lm.y * img_h)
 
@@ -368,74 +257,62 @@ while cap.isOpened():
                     point_LEIC = (lm.x * img_w, lm.y * img_h)
 
 
-    # ---------------------------------- EAR ----------------------------------
-                # EAR Right eye
-                # ----------------- RIGHT EYE EAR for DROWSINESS DETECTION -----------------
+
+    # -------------------------------------------------------------------------
+    # ------------------- EAR for DROWSINESS DETECTION ------------------------
+    # -------------------------------------------------------------------------
+                # ----------------- RIGHT EYE -----------------
                 if idx == 33:
                     p1_right = [lm.x * img_w, lm.y * img_h]
 
-                if idx == 144:
-                    p6_right = [lm.x * img_w, lm.y * img_h]
+                if idx == 160:
+                    p2_right = [lm.x * img_w, lm.y * img_h]
 
-                if idx == 153:
-                    p5_right = [lm.x * img_w, lm.y * img_h]
+                if idx == 158:
+                    p3_right = [lm.x * img_w, lm.y * img_h]
 
                 if idx == 133:
                     p4_right = [lm.x * img_w, lm.y * img_h]
 
-                if idx == 158:
-                    p3_right = [lm.x * img_w, lm.y * img_h]
-                
-                if idx == 160:
-                    p2_right = [lm.x * img_w, lm.y * img_h]
-                
+                if idx == 153:
+                    p5_right = [lm.x * img_w, lm.y * img_h]
+
+                if idx == 144:
+                    p6_right = [lm.x * img_w, lm.y * img_h]
+
+        
                 # Calculate EAR if all points are feasible
                 if p1_right and p2_right and p3_right and p4_right and p5_right and p6_right:
                     all_points_right_eye = True
                     EAR_right = (abs(p2_right[1]-p6_right[1])+abs(p3_right[1]-p5_right[1])) / (2*abs(p1_right[0]-p4_right[0]))
-                    if EAR_right > max_EAR_right:
-                        max_EAR_right = EAR_right
-                        # we dont use the max value? was supposed to use this instead of max EAR=1 because that is not possible to reach. Test this if it is still the case, if not, remove EAR_left_max etc. 
-                        # the idea was something like this: (justere skalaen) sånn at ikke 20% åpne øyne egt er når man har de ganske fullt åpne fordi 1 i EAR er uoppnålig
-                        # if EAR_right > EAR_right_max: 
-                        #     EAR_right_max = EAR_right
-                        # else:
-                        # EAR_right = EAR_right/EAR_right_max
-                    
-                # EAR Left eye
-                # ----------------- LEFT EYE EAR for DROWSINESS DETECTION -----------------
+        
+
+                # ----------------- LEFT EYE  -----------------
                 if idx == 362:
                     p1_left = [lm.x * img_w, lm.y * img_h]
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-                if idx == 380:
-                    p6_left = [lm.x * img_w, lm.y * img_h]
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-
-                if idx == 373:
-                    p5_left = [lm.x * img_w, lm.y * img_h]
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-
-                if idx == 263:
-                    p4_left = [lm.x * img_w, lm.y * img_h]
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-
-                if idx == 387:
-                    p3_left = [lm.x * img_w, lm.y * img_h]
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
 
                 if idx == 385:
                     p2_left = [lm.x * img_w, lm.y * img_h]
-                    cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(0, 0, 255), thickness=-1)
-                    
+
+                if idx == 387:
+                    p3_left = [lm.x * img_w, lm.y * img_h]
+
+                if idx == 263:
+                    p4_left = [lm.x * img_w, lm.y * img_h]
+
+                if idx == 373:
+                    p5_left = [lm.x * img_w, lm.y * img_h]
+
+                if idx == 380:
+                    p6_left = [lm.x * img_w, lm.y * img_h]
+
+
                 # Calculate EAR if all points are feasible
                 if p1_left and p2_left and p3_left and p4_left and p5_left and p6_left:
                     all_points_left_eye = True
                     EAR_left = (abs(p2_left[1]-p6_left[1])+abs(p3_left[1]-p5_left[1])) / (2*abs(p1_left[0]-p4_left[0]))
-                    if EAR_left > max_EAR_left:
-                        max_EAR_left = EAR_left
                 
                 
-                # Drowsiness detection
                 # ----------------- DROWSINESS DETECTION -----------------
                 if all_points_right_eye and all_points_left_eye:
                     driver_asleep, time_start_drowsy, time_asleep = drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, time_asleep)     # driver_asleep and time_start_drowsy are global variables
@@ -443,8 +320,9 @@ while cap.isOpened():
 
 
 
-
-    # ---------------------------------- FACE for HEAD GAZE ----------------------------------
+    # ----------------------------------------------------------------------------------------
+    # ---------------------------------- FACIAL ORIENTATION ----------------------------------
+    # ----------------------------------------------------------------------------------------
                 if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
                     if idx == 1:
                         nose_2d = (lm.x * img_w, lm.y * img_h)
@@ -489,10 +367,6 @@ while cap.isOpened():
                         face_3d.append([x, y, lm.z])
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
                     
-                    
-
-                    # Vi må vel kanskje appende alle punkter først, og så gjøre arrayen om til en NUMPY array? fordi numpy array har ikke append funksjonen...
-
         
 
                 # ----------------- LEFT EYE IRIS for EYE GAZING -----------------
@@ -571,58 +445,36 @@ while cap.isOpened():
                         right_eye_2d.append([x, y])
                         right_eye_3d.append([x, y, lm.z])                    
 
-                    
 
 
-
-            # 4.4. - Draw the positions on the frame
-
+            # Draw Iris center and Center of Eye for both eyes
+            # ----- LEFT EYE -----
             l_eye_width = point_LEL[0] - point_LER[0]
-
             l_eye_height = point_LEB[1] - point_LET[1]
-
             l_eye_center = [(point_LEL[0] + point_LER[0])/2 ,(point_LEB[1] + point_LET[1])/2]
 
 
-            #cv2.circle(image, (int(l_eye_center[0]), int(l_eye_center[1])), radius=int(horizontal_threshold * l_eye_width), color=(255, 0, 0), thickness=-1) #center of eye and its radius 
-
             cv2.circle(image, (int(point_LEIC[0]), int(point_LEIC[1])), radius=3, color=(0, 255, 0), thickness=-1) # Center of iris
-
             cv2.circle(image, (int(l_eye_center[0]), int(l_eye_center[1])), radius=2, color=(128, 128, 128), thickness=-1) # Center of eye
-
-            #print("Left eye: x = " + str(np.round(point_LEIC[0],0)) + " , y = " + str(np.round(point_LEIC[1],0)))
 
             cv2.putText(image, "Left eye:  x = " + str(np.round(point_LEIC[0],0)) + " , y = " + str(np.round(point_LEIC[1],0)), (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2) 
 
 
-
+            # ----- RIGHT EYE -----
             r_eye_width = point_REL[0] - point_RER[0]
-
             r_eye_height = point_REB[1] - point_RET[1]
-
             r_eye_center = [(point_REL[0] + point_RER[0])/2 ,(point_REB[1] + point_RET[1])/2]
 
-            #cv2.circle(image, (int(r_eye_center[0]), int(r_eye_center[1])), radius=int(horizontal_threshold * r_eye_width), color=(255, 0, 0), thickness=-1) #center of eye and its radius 
-
             cv2.circle(image, (int(point_REIC[0]), int(point_REIC[1])), radius=3, color=(0, 0, 255), thickness=-1) # Center of iris
-
             cv2.circle(image, (int(r_eye_center[0]), int(r_eye_center[1])), radius=2, color=(128, 128, 128), thickness=-1) # Center of eye
-
-            #print("right eye: x = " + str(np.round(point_REIC[0],0)) + " , y = " + str(np.round(point_REIC[1],0)))
-
+            
             cv2.putText(image, "Right eye: x = " + str(np.round(point_REIC[0],0)) + " , y = " + str(np.round(point_REIC[1],0)), (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2) 
 
-                
-
             
-
-            # speed reduction (comment out for full speed)
-
             time.sleep(1/25) # [s]
 
 
 # ------ CALCULATING FACE AND EYE GAZE ------
-        # Do we want to calculate head and eye gaze over again whenever we detect a new point, or is it ok for each frame? If we want to do it for each point, put the calculations inside the for-loop, otherwise, keep it in the if.results.multi_face_landmarks if-statement
         # ----------------- HEAD GAZE -----------------
         # The camera matrix 
         focal_length = 1 * img_w
@@ -654,9 +506,9 @@ while cap.isOpened():
         rmat_right_eye, jac_right_eye = cv2.Rodrigues(rot_vec_right_eye)
 
         # Angels
-        # rotation about x-axis = pitch, direction of rotation is nodding
-        # rotation about y-axis = yaw,   direction of rotation is turing head left or right -> turn head to the right is positive
-        # rotation about z-axis = roll,  direction of rotation is tilting head left or right -> tilt to the left is positive
+        # pitch -> nodding: negative down, positive up
+        # yaw -> turn: negative left, positive right
+        # roll -> tilting: negative left, positive right
 
         # Get angles
         angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
@@ -675,24 +527,18 @@ while cap.isOpened():
         pitch_right_eye = angles_right_eye[0] * 1800
         yaq_right_eye = angles_right_eye[1] * 1800
 
-        # Print the angles
-        #print("Pitch: " + str(pitch) + " Yaw: " + str(yaw) + " Roll: " + str(roll))
-        #print("Pitch left eye: " + str(pitch_left_eye) + " Yaw left eye: " + str(yaw_left_eye))
-        #print("Pitch right eye: " + str(pitch_right_eye) + " Yaw right eye: " + str(yaq_right_eye))
-
-        # iris center
-        #point_REIC
-        #point_LEIC
+        
+        # ----------------- EYE GAZE -----------------
+        # Finding the center of the eye
         l_eye_center = [(point_LEL[0] + point_LER[0])/2 ,(point_LEB[1] + point_LET[1])/2]
         r_eye_center = [(point_REL[0] + point_RER[0])/2 ,(point_REB[1] + point_RET[1])/2]
         
+        # Calculating angle between Iris Center and Center of Eye
         right_eye_yaw_angle = yaw_angle_between_points(point_REIC, r_eye_center, point_RET)
         right_eye_pitch_angle = pitch_angle_between_points(point_REIC, r_eye_center, point_RER)
 
         left_eye_yaw_angle = yaw_angle_between_points(point_LEIC, l_eye_center, point_LET)
         left_eye_pitch_angle = pitch_angle_between_points(point_LEIC, l_eye_center, point_LER)
-
-        # pitch, altså se opp og ned, funker dårlig, men orker ikke meeeer ah
 
         total_pitch = pitch + right_eye_pitch_angle/2 + left_eye_pitch_angle/2
         total_yaw = yaw + right_eye_yaw_angle/2 + left_eye_yaw_angle/2
@@ -717,17 +563,9 @@ while cap.isOpened():
 
             fps=0
 
-        
-
-        #print("FPS:", fps)
-
 
 
         cv2.putText(image, f'FPS : {int(fps)}', (20,450), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 2)
-
-
-
-        # 4.5 - Show the frame to the user
 
         cv2.imshow('Technologies for Autonomous Vehicles - Driver Monitoring Systems using AI code sample', image)       
              
@@ -739,12 +577,4 @@ while cap.isOpened():
 
 
 
-# 5 - Close properly soruce and eventual log file
-
 cap.release()
-
-#log_file.close()
-
-    
-
-# [EOF]
