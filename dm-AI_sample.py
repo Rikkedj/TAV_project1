@@ -1,17 +1,8 @@
-
 import cv2
-
 import mediapipe as mp
-
 import numpy as np 
-
 import math
-
 import time
-
-import statistics as st
-
-import os
 
 
 def drowsiness_detection(EAR_right, EAR_left, driver_asleep, time_start_drowsy, time_asleep):
@@ -155,10 +146,6 @@ while cap.isOpened():
     # making new arrays for each frame in the "video", calcluating the points for each frame, and then calculating the gaze for each frame. If we want to calculate the gaze more often, we have to watch when we convert the arrays to numpy arrays because numpy arrays do not have the "append" function.
     face_2d = []
     face_3d = []
-    right_eye_2d = []
-    right_eye_3d = []
-    left_eye_2d = []
-    left_eye_3d = []
 
     # RIGHT EYE
     point_RER = [] # Right Eye Right
@@ -367,90 +354,10 @@ while cap.isOpened():
                         face_3d.append([x, y, lm.z])
                         cv2.circle(image, (int(lm.x * img_w), int(lm.y * img_h)), radius=2, color=(255, 0, 0), thickness=-1)
                     
-        
-
-                # ----------------- LEFT EYE IRIS for EYE GAZING -----------------
-                if idx == 473 or idx == 474 or idx == 475 or idx == 476 or idx == 477: # iris points
-                    if idx == 473:
-                        left_pupil_2d = (lm.x * img_w, lm.y * img_h)
-                        left_pupil_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        left_eye_2d.append([x, y])
-                        left_eye_3d.append([x, y, lm.z])
-
-                    if idx == 476:
-                        left_eye_right_edge_2d = (lm.x * img_w, lm.y * img_h)
-                        left_eye_right_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        left_eye_2d.append([x, y])
-                        left_eye_3d.append([x, y, lm.z])
-
-                    if idx == 477:
-                        left_eye_bottom_2d = (lm.x * img_w, lm.y * img_h)
-                        left_eye_bottom_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        left_eye_2d.append([x, y])
-                        left_eye_3d.append([x, y, lm.z])
-
-                    if idx == 474:
-                        left_eye_left_edge_2d = (lm.x * img_w, lm.y * img_h)
-                        left_eye_left_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        left_eye_2d.append([x, y])
-                        left_eye_3d.append([x, y, lm.z])
-
-                    if idx == 475:
-                        left_eye_top_2d = (lm.x * img_w, lm.y * img_h)
-                        left_eye_top_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        left_eye_2d.append([x, y])
-                        left_eye_3d.append([x, y, lm.z])
-                    
-                    
-                # ----------------- RIGHT EYE IRIS for EYE GAZING -----------------
-                if idx == 468 or idx == 469 or idx == 470 or idx == 471 or idx == 472: # iris points
-
-                    if idx == 468:
-                        right_pupil_2d = (lm.x * img_w, lm.y * img_h)
-                        right_pupil_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        right_eye_2d.append([x, y])
-                        right_eye_3d.append([x, y, lm.z])
-                    
-                    if idx == 471:
-                        right_eye_right_edge_2d = (lm.x * img_w, lm.y * img_h)
-                        right_eye_right_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        right_eye_2d.append([x, y])
-                        right_eye_3d.append([x, y, lm.z])
-                    
-                    if idx == 472:
-                        right_eye_bottom_2d = (lm.x * img_w, lm.y * img_h)
-                        right_eye_bottom_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        right_eye_2d.append([x, y])
-                        right_eye_3d.append([x, y, lm.z])
-                    
-                    if idx == 469:
-                        right_eye_left_edge_2d = (lm.x * img_w, lm.y * img_h)
-                        right_eye_left_edge_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        right_eye_2d.append([x, y])
-                        right_eye_3d.append([x, y, lm.z])
-                    
-                    if idx == 470:
-                        right_eye_top_2d = (lm.x * img_w, lm.y * img_h)
-                        right_eye_top_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                        x, y = int(lm.x * img_w), int(lm.y * img_h)
-                        right_eye_2d.append([x, y])
-                        right_eye_3d.append([x, y, lm.z])                    
-
 
 
             # Draw Iris center and Center of Eye for both eyes
             # ----- LEFT EYE -----
-            l_eye_width = point_LEL[0] - point_LER[0]
-            l_eye_height = point_LEB[1] - point_LET[1]
             l_eye_center = [(point_LEL[0] + point_LER[0])/2 ,(point_LEB[1] + point_LET[1])/2]
 
 
@@ -461,8 +368,6 @@ while cap.isOpened():
 
 
             # ----- RIGHT EYE -----
-            r_eye_width = point_REL[0] - point_RER[0]
-            r_eye_height = point_REB[1] - point_RET[1]
             r_eye_center = [(point_REL[0] + point_RER[0])/2 ,(point_REB[1] + point_RET[1])/2]
 
             cv2.circle(image, (int(point_REIC[0]), int(point_REIC[1])), radius=3, color=(0, 0, 255), thickness=-1) # Center of iris
@@ -474,8 +379,8 @@ while cap.isOpened():
             time.sleep(1/25) # [s]
 
 
-# ------ CALCULATING FACE AND EYE GAZE ------
-        # ----------------- HEAD GAZE -----------------
+
+    # ----------------- HEAD GAZE -----------------
         # The camera matrix 
         focal_length = 1 * img_w
         cam_matrix = np.array([ [focal_length   , 0             , img_h / 2],
@@ -487,23 +392,13 @@ while cap.isOpened():
         # Convert to numpy arrays
         face_2d = np.array(face_2d, dtype=np.float64)
         face_3d = np.array(face_3d, dtype=np.float64)
-
-        left_eye_2d = np.array(left_eye_2d, dtype=np.float64)
-        left_eye_3d = np.array(left_eye_3d, dtype=np.float64)
-
-        right_eye_2d = np.array(right_eye_2d, dtype=np.float64)
-        right_eye_3d = np.array(right_eye_3d, dtype=np.float64)
       
 
         # Solve PnP
         success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
-        success_left_eye, rot_vec_left_eye, trans_vec_left_eye = cv2.solvePnP(left_eye_3d, left_eye_2d, cam_matrix, dist_matrix)
-        success_right_eye, rot_vec_right_eye, trans_vec_right_eye = cv2.solvePnP(right_eye_3d, right_eye_2d, cam_matrix, dist_matrix)
-
+        
         # Get rotational matrix
         rmat, jac = cv2.Rodrigues(rot_vec)
-        rmat_left_eye, jac_left_eye = cv2.Rodrigues(rot_vec_left_eye)
-        rmat_right_eye, jac_right_eye = cv2.Rodrigues(rot_vec_right_eye)
 
         # Angels
         # pitch -> nodding: negative down, positive up
@@ -512,9 +407,7 @@ while cap.isOpened():
 
         # Get angles
         angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
-        angles_left_eye, mtxR_left_eye, mtxQ_left_eye, Qx_left_eye, Qy_left_eye, Qz_left_eye = cv2.RQDecomp3x3(rmat_left_eye)
-        angles_right_eye, mtxR_right_eye, mtxQ_right_eye, Qx_right_eye,Qy_right_eye, Qz_right_eye = cv2.RQDecomp3x3(rmat_right_eye)
-
+        
         # Convert from Euler Angels to degrees
         pitch = angles[0] * 1800
         yaw = -angles[1] * 1800
@@ -522,23 +415,18 @@ while cap.isOpened():
         if roll > 180:
             roll = roll - 360
 
-        pitch_left_eye = angles_left_eye[0] * 1800
-        yaw_left_eye = angles_left_eye[1] * 1800
-        pitch_right_eye = angles_right_eye[0] * 1800
-        yaq_right_eye = angles_right_eye[1] * 1800
-
         
-        # ----------------- EYE GAZE -----------------
+    # ----------------- EYE GAZE -----------------
         # Finding the center of the eye
-        l_eye_center = [(point_LEL[0] + point_LER[0])/2 ,(point_LEB[1] + point_LET[1])/2]
-        r_eye_center = [(point_REL[0] + point_RER[0])/2 ,(point_REB[1] + point_RET[1])/2]
+        point_LEC = l_eye_center
+        point_REC = r_eye_center
         
         # Calculating angle between Iris Center and Center of Eye
-        right_eye_yaw_angle = yaw_angle_between_points(point_REIC, r_eye_center, point_RET)
-        right_eye_pitch_angle = pitch_angle_between_points(point_REIC, r_eye_center, point_RER)
+        right_eye_yaw_angle = yaw_angle_between_points(point_REIC, point_REC, point_RET)
+        right_eye_pitch_angle = pitch_angle_between_points(point_REIC, point_REC, point_RER)
 
-        left_eye_yaw_angle = yaw_angle_between_points(point_LEIC, l_eye_center, point_LET)
-        left_eye_pitch_angle = pitch_angle_between_points(point_LEIC, l_eye_center, point_LER)
+        left_eye_yaw_angle = yaw_angle_between_points(point_LEIC, point_LEC, point_LET)
+        left_eye_pitch_angle = pitch_angle_between_points(point_LEIC, point_LEC, point_LER)
 
         total_pitch = pitch + right_eye_pitch_angle/2 + left_eye_pitch_angle/2
         total_yaw = yaw + right_eye_yaw_angle/2 + left_eye_yaw_angle/2
